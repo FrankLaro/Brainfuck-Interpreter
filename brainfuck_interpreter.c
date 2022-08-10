@@ -2,23 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ARR_DIMENSION 30000 
+# define ARR_DIMENSION 30000 
 char array[ARR_DIMENSION];
 int cursor = 0;
-int start_loop = -1;
-int end_loop   = -1;
 
-// test function
-void test(char arr[], int arr_size){
-    int i;
-    for (i = 0; i < arr_size; i++){
-        printf("%c", arr[i]);
-    }
-    printf("\n");
-    sleep(1);
-}
-
-// * WORKS FINE
 // determinate how long the file is
 int numberOfCommand(char file_name[]) {
     FILE *f;
@@ -36,7 +23,6 @@ int numberOfCommand(char file_name[]) {
     return number_of_command;
 }
 
-// * WORKS FINE
 // make a copy of the code
 void copyCodeFromFile(char file_name[], char arr[], int arr_size) {
     FILE *f;
@@ -71,7 +57,7 @@ void moveCursor(char command) {
 // copy loop code
 char* loop(char code[], int start, int end) {
     int i;
-    int loop_lenght = end - start - 1;
+    int loop_lenght = end - start;
     char* temp_code = malloc(loop_lenght);
     
     for (i = 0; i < loop_lenght; i++) {
@@ -93,7 +79,10 @@ char* loop(char code[], int start, int end) {
 // * ] -> close loop
 void interpreter(char code[], int dimension) {
     int i, j;                                                      
-    int bracket_counter = 0;                                                      
+    int bracket_counter = 0;
+    int start_loop = -1;
+    int end_loop   = -1;
+
     for (i = 0; i < dimension; i++) {                                              
         if (code[i] == '>' || code[i] == '<') { // * move cursor
             moveCursor(code[i]);
@@ -102,7 +91,7 @@ void interpreter(char code[], int dimension) {
         } else if (code[i] == '-') {            // * decrese value
             array[cursor]--;
         } else if (code[i] == '.') {            // * output
-            printf("%c", array[cursor]);
+            printf("%c", array[cursor]); 
         } else if (code[i] == ',') {            // * input
             scanf(" %c", &array[cursor]);
         // * start loop code
@@ -120,9 +109,9 @@ void interpreter(char code[], int dimension) {
                         }
                 }
             }
-            i = end_loop + 1;
+            i = end_loop;
             while(array[cursor] != 0) {
-                interpreter(loop(code, start_loop, end_loop), end_loop - start_loop + 1);
+                interpreter(loop(code, start_loop, end_loop - 1), end_loop - start_loop - 1);
             }
         }
         // * end loop code
@@ -134,7 +123,6 @@ int main(int argc, char *file_path[]) {
     char* code  = malloc(code_dimension);
 
     copyCodeFromFile(file_path[1], code, code_dimension);
-    // ? test(code, code_dimension);
     interpreter(code, code_dimension);
     free(code);
     return 0;
